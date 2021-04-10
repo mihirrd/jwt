@@ -25,7 +25,7 @@ const users = [
     },
     {
         username : "xyz",
-        password : "$2b$10$2Lsvb88FCjadYAk8itV/W.OsLTJprzvCmNTH9v3I18v86pA1nZzOC",
+        password : "$2b$10$96JJR.8tU0P2zjBeSEpHYOqXkNWjw00nJxgaB0fqvaH8V07stwsRS",
         age : 28,
     }
 ]
@@ -73,7 +73,6 @@ authserver.post('/authenticate', async (req, res)=>{
 })
 
 
-
 authserver.get('/callback', (req,res)=>{
     //if someone is already logged in then redirect to /user endpoint
         res.redirect('http://localhost:4000/user')
@@ -87,16 +86,18 @@ authserver.get('/user',auth,(req,res)=>{
 })
 
 //here users will enter the informatin to login
-// authserver.post('/login',(req,res)=>{
+authserver.post('/newuser',(req,res)=>{
   
-//     const username = req.body.username
-//     const age = req.body.age
-//     const user = {username : username, age: age}
-//     const accesstoken = generatetoken(user)
-//     currenttoken = accesstoken
-//     res.redirect('http://localhost:4000/callback')
+    const username = req.body.username
+    const age = req.body.age
+    const hashedpassword = bcrypt.hashSync(req.body.password, 10)
+    const user = {username : username, password : hashedpassword, age: age}
+    users.push(user)
+    const accesstoken = generatetoken(user)
+    currenttoken = accesstoken
+    res.redirect('http://localhost:4000/callback')
 
-// })
+})
 
 //jwt token is generated using the information provied in /login endpoint 
 function generatetoken(user){
