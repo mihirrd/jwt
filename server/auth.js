@@ -1,6 +1,9 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import path from 'path' 
+import bcrypt from 'bcrypt'
+
+
 
 //server created using express
 const authserver = express()
@@ -16,13 +19,13 @@ var currenttoken = null //a variable for keeping track of who logged in the late
 //users database 
 const users = [
     {
-        id : 15435,
         username : "abc",
+        password : "$2b$10$TJaOwZBFXyh04EIyD.anEecV/5Xj6/B12R417ZUnbxwOpP/5BN9OO",
         age : 22,
     },
     {
-        id : 24245,
         username : "xyz",
+        password : "$2b$10$2Lsvb88FCjadYAk8itV/W.OsLTJprzvCmNTH9v3I18v86pA1nZzOC",
         age : 28,
     }
 ]
@@ -49,6 +52,28 @@ authserver.post('/callback', (req,res)=>{
     }
 })
 
+authserver.post('/authenticate', async (req, res)=>{
+    const user = users.find(u => u.username === req.body.username)
+    if(user == null){
+        res.send("No such account")
+        return
+    }
+    try {
+        if(await bcrypt.compare(req.body.password, user.password)){
+            currenttoken = generatetoken(user)
+            res.redirect('http://localhost:4000/user')
+        }
+        else{
+            res.send("No such account")
+        }
+    } catch (error) {
+        console.log(erro)
+    }
+    
+})
+
+
+
 authserver.get('/callback', (req,res)=>{
     //if someone is already logged in then redirect to /user endpoint
         res.redirect('http://localhost:4000/user')
@@ -57,20 +82,21 @@ authserver.get('/callback', (req,res)=>{
 
 //show currently logged in user 
 authserver.get('/user',auth,(req,res)=>{
-    res.json(users.filter(u=> u.username === req.user.username))
+    const username = users.filter(u=> u.username === req.user.username)[0].username
+    res.json(`User who is logged in : ${username}`)
 })
 
 //here users will enter the informatin to login
-authserver.post('/login',(req,res)=>{
+// authserver.post('/login',(req,res)=>{
   
-    const username = req.body.username
-    const age = req.body.age
-    const user = {username : username, age: age}
-    const accesstoken = generatetoken(user)
-    currenttoken = accesstoken
-    res.redirect('http://localhost:4000/callback')
+//     const username = req.body.username
+//     const age = req.body.age
+//     const user = {username : username, age: age}
+//     const accesstoken = generatetoken(user)
+//     currenttoken = accesstoken
+//     res.redirect('http://localhost:4000/callback')
 
-})
+// })
 
 //jwt token is generated using the information provied in /login endpoint 
 function generatetoken(user){
@@ -84,6 +110,7 @@ function auth(req,res,next){
         next()
     })
 }
+
 
 //hosting the auth server
 authserver.listen(PORT, ()=>{
