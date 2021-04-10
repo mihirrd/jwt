@@ -4,20 +4,13 @@
 1) Open a terminal and navigate to project directory and type the command type npm run authStart
 2) Open another terminal, navigate to project directory and type the command type npm run clientStart
 3) Go to client app by opening http://localhost:8000/client in the browser and click on continue button, 
-    as no login session exists it will redirect you to the /login endpoint.
-4) Currently two users abc and xyz have been hardcoded hence type only one of those names in username
-   section. It will show information about who has logged in.
+    as no login session exists it will redirect you to the login page.
+4) Currently two users abc and xyz have been hardcoded (their passwords are "mihir" and "deshpande" respectively hashed and stored)
+    hence type only one of those names in username and its respective password.It will show information about who has logged in.
+    Passwords are hashed using bcrypt. 
+5) A new user can also be signed up in the login page. 
 5) To check if JWT works, go to http://localhost:8000/client and again click continue. This time it will
-    not take you to the /login endpoint as JWT token is still valid and not expired.(expires in 5mins)
+    not take you to the login page as JWT token is still valid and not expired.(expires in 5mins)
     after 5 minutes, it will again take you to the login page.
-6) If one user is already logged in and another wants to log in, then fill up the username input 
-    (with only abc or xyz as they have been hardcoded) and click on login. 
+6) If one user is already logged in and another wants to log in, then click on new login button. 
 
-note:
-I am saving the token in a variable and not in the browser therefore restarting the browser will 
-result in user having to login again. As long as the server and browser are not closed the user remains 
-signed in. 
-
-It roughly demonstrates how jwt works, the feature of adding new users and password authentication is 
-absent. This assignment had a lot of new things for me to learn so could not build everything that was 
-mentioned in the email, however i'll keep working on it and try to make it better and better. 
